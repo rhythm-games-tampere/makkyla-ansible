@@ -1,4 +1,0 @@
-- name: restart padmiss-daemon
-  systemd:
-    name: padmiss-daemon
-    state: restarted

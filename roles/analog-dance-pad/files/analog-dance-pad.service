@@ -3,7 +3,7 @@ Description=Analog dance pad
 After=network.target
 
 [Service]
-User=stepmania
+User=mckyla
 WorkingDirectory=/opt/analog-dance-pad/server
 ExecStartPre=/bin/sleep 2
 ExecStart=/usr/bin/node dist/index.js

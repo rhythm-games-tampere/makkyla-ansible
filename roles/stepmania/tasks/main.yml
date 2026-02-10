@@ -1,224 +1,183 @@
 ## MAIN BUILD
 
-- name: Install Stepmania build dependencies
+- name: Install ITGmania build dependencies
   apt:
-    package: cmake,build-essential,mesa-common-dev,libglu1-mesa-dev,libglew1.5-dev,libxtst-dev,libxrandr-dev,libpng-dev,libjpeg-dev,zlib1g-dev,libbz2-dev,libogg-dev,libvorbis-dev,libc6-dev,yasm,libasound-dev,libpulse-dev,binutils-dev,libgtk2.0-dev,libmad0-dev,libudev-dev,libva-dev
+    package: libasound2-dev,libgl-dev,libglu1-mesa-dev,libgtk-3-dev,libjack-dev,libmad0-dev,libpulse-dev,libudev-dev,libxinerama-dev,libx11-dev,libxrandr-dev,libxtst-dev,nasm,cmake,build-essential,git
 
-- name: Fetch Stepmania source
+- name: Fetch ITGmania source
   git:
-    repo: https://github.com/Kauhsa/stepmania
-    dest: /opt/stepmania
-    version: mckyla
+    repo: https://github.com/rhythm-games-tampere/itgmania
+    dest: /opt/itgmania
+    recursive: yes
   register: source
-  diff: no
+  diff: false
 
 - name: Run CMake
-  shell: cmake -G 'Unix Makefiles' -DCMAKE_BUILD_TYPE=Release .. && cmake ..
+  shell: cmake -B Build -DWITH_FFMPEG_JOBS=$(nproc)
   args:
-    chdir: /opt/stepmania/Build
+    chdir: /opt/itgmania
   when: source.changed
 
-- name: Compile Stepmania
-  shell: make -j$(nproc --all)
+- name: Compile ITGmania
+  shell: cmake --build Build --parallel $(nproc)
   args:
-    chdir: /opt/stepmania/Build
+    chdir: /opt/itgmania
   when: source.changed
 
 ## THEME AND CONFIGURATION
 
 - name: Make sure content directory exists
   file:
-    path: /home/stepmania/stepmania-content
+    path: /home/mckyla/stepmania-content
     state: directory
-    owner: stepmania
-    group: stepmania
+    owner: mckyla
+    group: mckyla
     recurse: yes
 
-- name: Get Simply Love, McKylä edition
+- name: Get Simply Love
   git:
-    repo: https://github.com/Kauhsa/Simply-Love-SM5
-    dest: /home/stepmania/stepmania-content/Themes/Simply-Love-SM5
-    version: makkyla
-  become_user: stepmania
-  diff: no
+    repo: https://github.com/rhythm-games-tampere/simplylove
+    dest: /home/mckyla/stepmania-content/Themes/simplylove
+  become_user: mckyla
+  diff: false
 
 - name: Make sure Save directory exists
   file:
-    path: /home/stepmania/.stepmania-5.1/Save
+    path: /home/mckyla/.itgmania/Save
     state: directory
-    owner: stepmania
-    group: stepmania
+    owner: mckyla
+    group: mckyla
     recurse: yes
 
 - name: Check if Preferences.ini exists
   stat:
-    path: /home/stepmania/.stepmania-5.1/Save/Preferences.ini
+    path: /home/mckyla/.itgmania/Save/Preferences.ini
   register: preferences
 
 - name: Set basic preferences
   lineinfile:
-    path: /home/stepmania/.stepmania-5.1/Save/Preferences.ini
+    path: /home/mckyla/.itgmania/Save/Preferences.ini
     line: "{{ item.key }}={{ item.value }}\r"
     insertafter: '\[Options\]'
-    regexp: '^{{ item.key }}'
+    regexp: "^{{ item.key }}"
   with_items:
     - key: AdditionalFolders
-      value: /home/stepmania/stepmania-content
+      value: /home/mckyla/stepmania-content
     - key: Windowed
-      value: '0'
+      value: "0"
     - key: SoundDrivers
       value: alsa-sw
     - key: SoundDevice
       value: "{{ audio_device }}"
     - key: SoundPreferredSampleRate
-      value: '48000'
+      value: "48000"
     - key: LightsDriver
-      value: ''
+      value: ""
     - key: Theme
-      value: 'Simply-Love-SM5'
+      value: "simplylove"
     - key: DisplayWidth
-      value: '1920'
+      value: "1920"
     - key: DisplayHeight
-      value: '1080'
+      value: "1080"
     - key: DisplayAspectRatio
-      value: '1.777778'
+      value: "1.777778"
     - key: ArcadeOptionsNavigation
-      value: '1'
+      value: "1"
     - key: OnlyDedicatedMenuButtons
-      value: '1'
+      value: "1"
     - key: BGBrightness
-      value: '0.200000'
+      value: "0.200000"
     - key: ShowNativeLanguage
-      value: '0'
+      value: "0"
     - key: MusicWheelSwitchSpeed
-      value: '100'
+      value: "100"
     - key: DelayedBack
-      value: '0'
+      value: "0"
     - key: PercentageScoring
-      value: '1'
+      value: "1"
     - key: AutogenGroupCourses
-      value: '0'
+      value: "0"
     - key: CourseSortOrder
-      value: 'Title' # note: only works in our custom build
+      value: "Title" # note: only works in our custom build
     - key: DefaultModifiers
-      value: 'FailImmediateContinue, Overhead, Cel, C600'
+      value: "FailImmediateContinue, Overhead, Cel, C600"
     - key: Vsync
-      value: '0'
+      value: "0"
     - key: InputDrivers
-      value: 'LinuxEvent,X11'
+      value: "LinuxEvent,X11"
     - key: DisplayId
-      value: 'XSCREEN_RANDR'
+      value: "XSCREEN_RANDR"
     - key: FullscreenIsBorderlessWindow
       value: 0
-
-    # padmiss stuff
-    - key: MemoryCardOsMountPointP1
-      value: '/tmp/padmiss-daemon-p1'
-    - key: MemoryCardOsMountPointP2
-      value: '/tmp/padmiss-daemon-p2'
-    - key: MemoryCardDriver
-      value: 'Directory'
-    - key: MemoryCards
-      value: '1'
-    - key: MemoryCardPadmissEnabled
-      value: '1'
   when: preferences.stat.exists
 
 - name: Replace all instances of theme
   replace:
-    path: /home/stepmania/.stepmania-5.1/Save/Preferences.ini
-    replace: 'Theme=Simply-Love-SM5'
-    regexp: '^Theme=(.*)'
+    path: /home/mckyla/.itgmania/Save/Preferences.ini
+    replace: "Theme=simplylove"
+    regexp: "^Theme=(.*)"
   when: preferences.stat.exists
-
-- name: Set ThemePrefs
-  copy:
-    src: files/ThemePrefs.ini
-    dest: /home/stepmania/.stepmania-5.1/Save/ThemePrefs.ini
-    owner: stepmania
-    group: stepmania
-
-- name: Make sure noteskins directory exists
-  file:
-    path: /home/stepmania/stepmania-content/NoteSkins/dance
-    state: directory
-    owner: stepmania
-    group: stepmania
-    recurse: yes
-
-- name: Install noteskins
-  synchronize:
-    src: files/noteskins/
-    dest: /home/stepmania/stepmania-content/NoteSkins/dance
 
 ## STARTUP AND DESKTOP ICONS
 
-- name: Make sure pulseaudio is started and enabled for user
-  become_user: stepmania
-  systemd:
-    enabled: yes
-    scope: user
-    state: started
-    name: pulseaudio
-
 - name: Copy keymap template
   copy:
-    src: "files/{{ keymap_template_file }}"
-    dest: /home/stepmania/Keymaps.template.ini
+    src: "files/Keymaps.template.ini"
+    dest: /home/mckyla/Keymaps.template.ini
     mode: 0755
 
 - name: Copy startup script
   template:
     src: templates/start.sh
-    dest: /home/stepmania/start-stepmania.sh
+    dest: /home/mckyla/start-itgmania.sh
     mode: 0755
 
 - name: Make sure Desktop folder exists
   file:
-    path: /home/stepmania/Desktop
-    owner: stepmania
-    group: stepmania
+    path: /home/mckyla/Desktop
+    owner: mckyla
+    group: mckyla
     state: directory
 
-- name: Add Stepmania icon to desktop
+- name: Add ITGmania icon to desktop
   copy:
     src: files/stepmania.desktop
-    dest: /home/stepmania/Desktop/stepmania.desktop
+    dest: /home/mckyla/Desktop/stepmania.desktop
     mode: 0755
-    owner: stepmania
-    group: stepmania
+    owner: mckyla
+    group: mckyla
 
 - name: Make sure Songs folder exists
   file:
-    path: /home/stepmania/stepmania-content/Songs
-    owner: stepmania
-    group: stepmania
+    path: /home/mckyla/stepmania-content/Songs
+    owner: mckyla
+    group: mckyla
     state: directory
 
 - name: Add link to Songs to Desktop
   file:
-    src: /home/stepmania/stepmania-content/Songs
-    dest: /home/stepmania/Desktop/Songs
+    src: /home/mckyla/stepmania-content/Songs
+    dest: /home/mckyla/Desktop/Songs
     state: link
     force: yes
 
 - name: Make sure Courses folder exists
   file:
-    path: /home/stepmania/stepmania-content/Courses
-    owner: stepmania
-    group: stepmania
+    path: /home/mckyla/stepmania-content/Courses
+    owner: mckyla
+    group: mckyla
     state: directory
 
 - name: Add link to Courses to Desktop
   file:
-    src: /home/stepmania/stepmania-content/Courses
-    dest: /home/stepmania/Desktop/Courses
+    src: /home/mckyla/stepmania-content/Courses
+    dest: /home/mckyla/Desktop/Courses
     state: link
     force: yes
 
 - name: Add link to Save to Desktop
   file:
-    src: /home/stepmania/.stepmania-5.1/Save
-    dest: /home/stepmania/Desktop/Save
+    src: /home/mckyla/.itgmania/Save
+    dest: /home/mckyla/Desktop/Save
     state: link
     force: yes

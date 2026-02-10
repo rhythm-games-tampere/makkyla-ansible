@@ -1,7 +1,7 @@
 [dedicab]
-192.168.11.40 audio_device="hw:CARD=Audio,DEV=0" rfid_reader_p1_bus=8 rfid_reader_p1_port_number=5 rfid_reader_p2_bus=8 rfid_reader_p2_port_number=4 padmiss_api_key="{{ vault_tennari_padmiss_api_key }}" left_pad_usb_port="8-2" right_pad_usb_port="8-3" keymap_template_file="Keymaps.template-keyboard.ini" main_display_device=DP-0
-192.168.11.41 audio_device="hw:CARD=Audio,DEV=0" rfid_reader_p1_bus=8 rfid_reader_p1_port_number=5 rfid_reader_p2_bus=8 rfid_reader_p2_port_number=4 padmiss_api_key="{{ vault_pro_padmiss_api_key }}" left_pad_usb_port="8-2" right_pad_usb_port="8-3" keymap_template_file="Keymaps.template-keyboard.ini" main_display_device=DVI-D-0
-192.168.11.42 audio_device="hw:CARD=Audio,DEV=0" rfid_reader_p1_bus=8 rfid_reader_p1_port_number=5 rfid_reader_p2_bus=8 rfid_reader_p2_port_number=4 padmiss_api_key="{{ vault_fat_padmiss_api_key }}" left_pad_usb_port="8-2" right_pad_usb_port="8-3" keymap_template_file="Keymaps.template-control-box.ini" main_display_device=DVI-D-0
+pro2 audio_device="hw:CARD=Audio,DEV=0" left_pad_usb_port="8-2" right_pad_usb_port="8-3" main_display_device=HDMI-0
+fat2 audio_device="hw:CARD=Audio,DEV=0" left_pad_usb_port="8-2" right_pad_usb_port="8-3" main_display_device=HDMI-0
+ten2 audio_device="hw:CARD=Audio,DEV=0" left_pad_usb_port="8-2" right_pad_usb_port="8-3" main_display_device=HDMI-0
 
 [dedicab:vars]
-ansible_user=stepmania
+ansible_user=mckyla

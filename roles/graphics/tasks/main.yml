@@ -1,10 +1,6 @@
-- name: Add buster non-free repository
-  apt_repository:
-    repo: deb http://httpredir.debian.org/debian/ buster main contrib non-free
-
-- name: Install linux headers and nvidia-driver
+- name: Install AMD GPU firmware and Mesa drivers
   apt:
-    package: "linux-headers-{{ ansible_kernel }},nvidia-driver" 
+    package: libdrm-amdgpu1,xserver-xorg-video-amdgpu
     update_cache: yes
 
 - name: Make sure X.org configuration directory exists
@@ -14,10 +10,5 @@
 
 - name: Install Xorg configuration file
   copy:
-    src: files/20-nvidia.conf
-    dest: /etc/X11/xorg.conf.d/20-nvidia.conf
-
-- name: Blacklist nouveau
-  kernel_blacklist:
-    name: nouveau
-    state: present
+    src: files/20-amdgpu.conf
+    dest: /etc/X11/xorg.conf.d/20-amdgpu.conf

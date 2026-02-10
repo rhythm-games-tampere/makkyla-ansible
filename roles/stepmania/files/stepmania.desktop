@@ -1,8 +1,7 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
-Name=Stepmania
-Path=/stepmania
-Exec=/home/stepmania/start-stepmania.sh
+Name=ITGmania
+Exec=/home/mckyla/start-itgmania.sh
 Terminal=true
-Icon=/opt/stepmania/icons/hicolor/256x256/apps/stepmania-ssc.png
+Icon=/opt/itgmania/icons/hicolor/256x256/apps/itgmania-ssc.png

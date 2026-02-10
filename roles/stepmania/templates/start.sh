@@ -54,21 +54,21 @@ if [[ $left_pad_index == "NOT_FOUND" ]] || [[ $right_pad_index == "NOT_FOUND" ]]
   echo "One or more configured USB ports were missing. Key bindings were not set, so pads might not work correctly."
   read -p "Press enter to start Stepmania anyway"
 else
-  cp /home/stepmania/Keymaps.template.ini /home/stepmania/.stepmania-5.1/Save/Keymaps.ini
-  sed -i "s/JoyLeft/Joy1${left_pad_index}/g" /home/stepmania/.stepmania-5.1/Save/Keymaps.ini
-  sed -i "s/JoyRight/Joy1${right_pad_index}/g" /home/stepmania/.stepmania-5.1/Save/Keymaps.ini
+  cp /home/mckyla/Keymaps.template.ini /home/mckyla/.itgmania/Save/Keymaps.ini
+  sed -i "s/JoyLeft/Joy1${left_pad_index}/g" /home/mckyla/.itgmania/Save/Keymaps.ini
+  sed -i "s/JoyRight/Joy1${right_pad_index}/g" /home/mckyla/.itgmania/Save/Keymaps.ini
 fi
 
 # remove logs before starting stepmania, just in case we don't accidentally
 # shut down in some corner case.
-rm -f "/home/stepmania/.stepmania-5.1/Logs/info.txt"
+rm -f "/home/mckyla/.itgmania/Logs/info.txt"
 
-pasuspender /opt/stepmania/stepmania
+pasuspender /opt/itgmania/itgmania
 
 if [[ $? -ne 0 ]]; then
   # wait until enter is pressed
   read -p "Press enter to continue"
-elif grep -q "5b5c513e-7067-4a14-89de-1fa007d93a33" "/home/stepmania/.stepmania-5.1/Logs/info.txt"; then
+elif grep -q "5b5c513e-7067-4a14-89de-1fa007d93a33" "/home/mckyla/.itgmania/Logs/info.txt"; then
   # Above is magic string inserted to logs by stepmania theme if "power off" is selected.
   sudo poweroff
 fi

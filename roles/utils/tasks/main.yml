@@ -1,20 +1,19 @@
+- name: Remove leftover DVD apt source
+  file:
+    path: /etc/apt/sources.list.d/dvd.list
+    state: absent
+
 - name: Install utility packages
   apt:
-    package: sudo,chromium,vim,htop,net-tools,gedit,rsync,git
+    package: vim,htop,rsync,git,curl
 
-- name: Make sure user stepmania is in sudo group
-  user:
-    name: stepmania
-    groups: sudo
-    append: yes
-
-- name: Enable passwordless sudo for stepmania
+- name: Enable passwordless sudo for mckyla
   lineinfile:
     path: /etc/sudoers
-    line: 'stepmania ALL=(ALL) NOPASSWD:ALL'
-    regexp: '^stepmania'
-    validate: '/usr/sbin/visudo -cf %s'
-    insertbefore: '^root ' 
+    line: "mckyla ALL=(ALL) NOPASSWD:ALL"
+    regexp: "^mckyla"
+    validate: "/usr/sbin/visudo -cf %s"
+    insertbefore: "^root "
 
 - name: Disable apt-daily-service.timer
   systemd:
@@ -28,30 +27,12 @@
     enabled: no
     state: stopped
 
-- name: Make sure .config/autostart folder exists
-  file:
-    path: /home/stepmania/.config/autostart
-    state: directory
-    owner: stepmania
-    group: stepmania
-
-- name: Remove light-locker from autostart
+- name: Disable automatic system suspend
   copy:
-    src: files/disabled-autostart.desktop
-    dest: /home/stepmania/.config/autostart/light-locker.desktop
-    owner: stepmania
-    group: stepmania
-
-- name: Remove xscreensaver from autostart
-  copy:
-    src: files/disabled-autostart.desktop
-    dest: /home/stepmania/.config/autostart/xscreensaver.desktop
-    owner: stepmania
-    group: stepmania
-
-- name: Remove xfce4-power-manager from autostart
-  copy:
-    src: files/disabled-autostart.desktop
-    dest: /home/stepmania/.config/autostart/xfce4-power-manager.desktop
-    owner: stepmania
-    group: stepmania
+    content: |
+      [Sleep]
+      AllowSuspend=no
+      AllowHibernation=no
+      AllowSuspendThenHibernate=no
+      AllowHybridSleep=no
+    dest: /etc/systemd/sleep.conf

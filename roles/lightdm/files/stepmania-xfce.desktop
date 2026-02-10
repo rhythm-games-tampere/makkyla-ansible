@@ -1,8 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Name=Stepmania Xfce Session
-Comment=Use this session to run stepmania, and xfce afterwards
-Exec=/usr/bin/stepmania-xfce
-Icon=
-Type=Application
-DesktopNames=StepmaniaXFCE

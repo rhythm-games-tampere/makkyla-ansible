@@ -7,43 +7,55 @@
     dest: /etc/udev/rules.d/98-permissions-to-analog-dance-pads.rules
   register: udev
 
-- name: Give permissions for Teensy (necessary? maybe not?)
-  copy:
-    content: |
-      ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789B]?", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
-      ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789A]?", ENV{MTP_NO_PROBE}="1"
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789ABCD]?", MODE:="0666"
-      KERNEL=="ttyACM*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789B]?", MODE:="0666"
-    dest: /etc/udev/rules.d/97-permissions-to-teensy.rules
-  register: udev
-
 - name: Reload udev permissions
   shell: udevadm control --reload
   when: udev.changed
 
-- name: Add NodeSource signing key
-  apt_key:
-    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-
-- name: Enable NodeSource repository
-  apt_repository:
-    repo: deb https://deb.nodesource.com/node_12.x buster main
-
-- name: Enable NodeSource src repository
-  apt_repository:
-    repo: deb-src https://deb.nodesource.com/node_12.x buster main
-
-- name: Install node and libusb-dev
+- name: Install libusb-dev
   apt:
-    package: nodejs,libusb-dev
-    update_cache: yes
+    package: libusb-dev
+
+- name: Create directory for nvm
+  file:
+    path: /opt/nvm
+    state: directory
+    owner: mckyla
+    group: mckyla
+
+- name: Install nvm
+  shell: curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | NVM_DIR=/opt/nvm bash
+  args:
+    creates: /opt/nvm/nvm.sh
+
+- name: Install Node.js 12 via nvm
+  shell: export NVM_DIR=/opt/nvm && . /opt/nvm/nvm.sh && nvm install v12.22.12
+  args:
+    creates: /opt/nvm/versions/node/v12.*
+
+- name: Symlink node binary globally
+  file:
+    src: /opt/nvm/versions/node/v12.22.12/bin/node
+    dest: /usr/local/bin/node
+    state: link
+
+- name: Symlink npm binary globally
+  file:
+    src: /opt/nvm/versions/node/v12.22.12/bin/npm
+    dest: /usr/local/bin/npm
+    state: link
+
+- name: Symlink npx binary globally
+  file:
+    src: /opt/nvm/versions/node/v12.22.12/bin/npx
+    dest: /usr/local/bin/npx
+    state: link
 
 - name: Create directory for analog-dance-pad
   file:
     path: /opt/analog-dance-pad
     state: directory
-    owner: stepmania
-    group: stepmania
+    owner: mckyla
+    group: mckyla
 
 - name: Clone source for analog-dance-pad
   git:
@@ -51,22 +63,35 @@
     dest: /opt/analog-dance-pad
     force: yes
   register: source
-  become_user: stepmania
-  diff: no
+  become_user: mckyla
+  diff: false
 
 - name: Install dependencies
+  shell: npm install --no-save || true
+  args:
+    chdir: /opt/analog-dance-pad/server
+  when: source.changed
+  become_user: mckyla
+
+- name: Fix Python 3 incompatible file mode in node-gyp
+  replace:
+    path: /opt/nvm/versions/node/v12.22.12/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/input.py
+    regexp: "'rU'"
+    replace: "'r'"
+
+- name: Install dependencies again because node-gyp something python 3 something :D
   shell: npm install --no-save
   args:
     chdir: /opt/analog-dance-pad/server
   when: source.changed
-  become_user: stepmania
+  become_user: mckyla
 
 - name: Build server
   shell: npm run build
   args:
     chdir: /opt/analog-dance-pad/server
   when: source.changed
-  become_user: stepmania
+  become_user: mckyla
 
 - name: Create analog-dance-pad service
   copy:
@@ -85,20 +110,20 @@
   file:
     path: /opt/teensy-loader-cli
     state: directory
-    owner: stepmania
-    group: stepmania
+    owner: mckyla
+    group: mckyla
 
 - name: Get teensy loader CLI source
   git:
     repo: https://github.com/PaulStoffregen/teensy_loader_cli
     dest: /opt/teensy-loader-cli
   register: teensy_loader_source
-  become_user: stepmania
-  diff: no
+  become_user: mckyla
+  diff: false
 
 - name: Build server
   shell: make
   args:
     chdir: /opt/teensy-loader-cli
   when: teensy_loader_source.changed
-  become_user: stepmania
+  become_user: mckyla

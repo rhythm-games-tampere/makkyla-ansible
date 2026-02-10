@@ -1,46 +1,27 @@
-# Ansible scripts for McKylän Superarcade
+# McKyla Ansible
 
-## Very rough installation guide
+Ansible configuration management for McKyla Superarcade — ITGmania-based dance game arcade cabinets.
 
-### Debian installation
+## Prerequisites
 
-- Get Debian 10.3 amd64 `netinstall` image.
-- Write image it to USB stick.
-- Make sure that the target machine is set to "legacy mode" in BIOS to avoid Debian being installed in UEFI mode to avoid UEFI problems.
-- Boot from USB stick.
-- Boot in non-graphical installer, because that's what the rest of the guide follows.
-- When asked for hostname, use hostname `dedicab-<machine here>`.
-- When asked for domain, set nothing.
-- When asked to create user, use username `stepmania`.
-- Partition as you like. Using whole disk as a single partition is good. Make sure there is some swap.
-- Eventually you will asked to "select software". Select the following:
-    - "...Xfce"
-    - "SSH server"
-    - "standard system utilities"
-    - Unselect everything else
-- After the installation is complete, boot to the new Debian system!
+- Ansible installed on the control machine
+- SSH access to the target hosts
 
-### Preparing for running Ansible
+## Inventory
 
-- Log in as `stepmania` user.
-- Start terminal.
-- Run `su -c "gpasswd -a stepmania sudo"` to add `stepmania` to `sudo` group.
-- Reboot (or log out + log in) for the group change to take effect.
-- Now we need to add the SSH key to the system so we can continue with Ansible. If you have Github account, you can do the following:
-    - `sudo apt install curl`
-    - `mkdir ~/.ssh`
-    - `curl https://github.com/<GitHub username>.keys > ~/.ssh/authorized_keys`
-- Let's set the `stepmania` user to be able to run with passwordless `sudo`, so we don't need to care about password when running Ansible. Let's do the following:
-    - Run `sudo /sbin/visudo`.
-    - Add row `stepmania ALL=(ALL) NOPASSWD:ALL` to the bottom.
-    - Save. Now `sudo` should work without password.
+The inventory at `inventories/makkyla/hosts` defines three machines in the `dedicab` group: `pro2`, `fat2`, and `ten2`. Each host has per-host variables for audio devices, USB port mappings, and display devices.
 
-### Running Ansible script for full install
+## Provisioning
 
-Now we can start running commands on a remote computer with Ansible.
+Run the full install playbook to apply all roles (`grub`, `ssh`, `utils`, `graphics`, `stepmania`, `analog-dance-pad`):
 
-- Create file `vault-key` to the root of this repository and set the Ansible vault key there. Ask Kauhsa about it.
-- Run `ansible-playbook -i inventories/makkyla full-install.yml --diff --vault-password-file vault-key --limit <machine ip>`.
-- Now we will get to the slightly janky part of this! Reboot the computer and Stepmania will start. It will not have the correct configuration yet though - we just need to do this once to generate initial `Preferences.ini` and some other files. So just close it. It might be difficult, since you might not have proper key bindings to do that. I suggest connecting to the machine via SSH and executing `pkill stepmania`.
-- Run `ansible-playbook -i inventories/makkyla full-install.yml --diff --vault-password-file vault-key --limit <machine ip>` again. Reboot.
-- Copy your songs and courses to the `/home/stepmania/stepmania-content` folder.
+```bash
+ansible-playbook -K -i inventories/makkyla full-install.yml --diff --limit <host>
+```
+
+* `--diff` is to list all changes
+* `--ask-become-pass` is to prompt for sudo password
+
+Replace `<host>` with a specific host name (e.g. `pro2`) or use `dedicab` to target all machines.
+
+The first run generates initial ITGmania config files. After a reboot, run the playbook again to apply the full configuration.
