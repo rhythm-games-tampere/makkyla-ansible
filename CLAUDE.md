@@ -65,4 +65,4 @@ Each machine in `inventories/makkyla/hosts` defines: `audio_device`, `main_displ
 
 ## Testing
 
-`test/run-test.sh` builds a Podman container (Ubuntu 24.04 with sshd) and runs the full playbook against it with `--skip-tags hardware,systemd`. An SSH keypair is auto-generated on first run. Use `--cleanup` to remove the container afterwards.
+`test/run-test.sh` runs the full playbook against a Podman container (Ubuntu 24.04 with sshd) with `--skip-tags hardware,systemd`. An SSH keypair is auto-generated on first run. By default, an existing container is reused for faster re-runs. Use `--rebuild` to tear down and recreate the container from scratch. Use `--cleanup` to remove the container afterwards.

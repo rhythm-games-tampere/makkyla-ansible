@@ -34,4 +34,4 @@ A Podman-based test environment runs the playbook in a disposable container, ski
 cd test && bash run-test.sh
 ```
 
-This builds an Ubuntu 24.04 container, connects via SSH, and runs `full-install.yml` with `--skip-tags hardware,systemd`. Use `--cleanup` to remove the container afterwards.
+This connects to an existing test container (or creates one if needed), and runs `full-install.yml` with `--skip-tags hardware,systemd`. Use `--rebuild` to force a fresh container, or `--cleanup` to remove it afterwards.

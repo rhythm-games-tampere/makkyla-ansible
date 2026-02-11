@@ -16,9 +16,11 @@ cleanup() {
 
 # Parse args
 DO_CLEANUP=false
+DO_REBUILD=false
 for arg in "$@"; do
     case "$arg" in
         --cleanup) DO_CLEANUP=true ;;
+        --rebuild) DO_REBUILD=true ;;
     esac
 done
 
@@ -28,16 +30,31 @@ if [ ! -f "$KEY_FILE" ]; then
     ssh-keygen -t ed25519 -f "$KEY_FILE" -N "" -C "makkyla-test"
 fi
 
-# Build the container image
-echo "Building container image..."
-podman build -t "$IMAGE_NAME" "$SCRIPT_DIR"
+# Check if container already exists and is running
+CONTAINER_RUNNING=false
+if [ "$DO_REBUILD" = false ] && podman inspect "$CONTAINER_NAME" &>/dev/null; then
+    if podman inspect --format '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null | grep -q true; then
+        echo "Reusing existing container."
+        CONTAINER_RUNNING=true
+    else
+        echo "Container exists but is not running, starting it..."
+        podman start "$CONTAINER_NAME"
+        CONTAINER_RUNNING=true
+    fi
+fi
 
-# Remove any previous test container
-podman rm -f "$CONTAINER_NAME" 2>/dev/null || true
+if [ "$CONTAINER_RUNNING" = false ]; then
+    # Build the container image
+    echo "Building container image..."
+    podman build -t "$IMAGE_NAME" "$SCRIPT_DIR"
 
-# Run the container
-echo "Starting container..."
-podman run -d --name "$CONTAINER_NAME" -p "$SSH_PORT:22" "$IMAGE_NAME"
+    # Remove any previous test container
+    podman rm -f "$CONTAINER_NAME" 2>/dev/null || true
+
+    # Run the container
+    echo "Starting container..."
+    podman run -d --name "$CONTAINER_NAME" -p "$SSH_PORT:22" "$IMAGE_NAME"
+fi
 
 # Wait for SSH to become available
 echo "Waiting for SSH..."
@@ -78,6 +95,9 @@ fi
 
 if [ "$DO_CLEANUP" = true ]; then
     cleanup
+else
+    echo "Stopping container (use --cleanup to remove it)."
+    podman stop "$CONTAINER_NAME" 2>/dev/null || true
 fi
 
 exit $RESULT
