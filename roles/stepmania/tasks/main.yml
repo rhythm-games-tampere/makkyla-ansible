@@ -8,6 +8,7 @@
   git:
     repo: https://github.com/rhythm-games-tampere/itgmania
     dest: /opt/itgmania
+    version: stable
     recursive: yes
   register: source
   diff: false
@@ -42,6 +43,7 @@
   git:
     repo: https://github.com/rhythm-games-tampere/simplylove
     dest: /home/mckyla/stepmania-content/Themes/simplylove
+    version: stable-mckyla
   become_user: mckyla
   diff: false
 
