@@ -12,8 +12,12 @@
   register: source
   diff: false
 
+# Minimaid is disabled because the bundled libmmmagic static library is x86-only,
+# which breaks arm64 builds. We don't use Minimaid hardware anyway (LightsDriver="").
+# Upstream ITGmania replaced libmmmagic with hidapi in PR #946 (merged to beta Aug 2025).
+# TODO: Once our fork merges upstream beta (which includes PR #946), this flag can be removed.
 - name: Run CMake
-  shell: cmake -B Build -DWITH_FFMPEG_JOBS=$(nproc)
+  shell: cmake -B Build -DWITH_FFMPEG_JOBS=$(nproc) -DWITH_MINIMAID=OFF
   args:
     chdir: /opt/itgmania
   when: source.changed

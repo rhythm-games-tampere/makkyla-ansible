@@ -1,0 +1,27 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    sudo \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create mckyla user with passwordless sudo
+RUN useradd -m -s /bin/bash mckyla && \
+    echo "mckyla ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Set up SSH
+RUN mkdir /var/run/sshd && \
+    ssh-keygen -A
+
+# Install the test SSH public key
+RUN mkdir -p /home/mckyla/.ssh && \
+    chmod 700 /home/mckyla/.ssh
+COPY id_ed25519.pub /home/mckyla/.ssh/authorized_keys
+RUN chmod 600 /home/mckyla/.ssh/authorized_keys && \
+    chown -R mckyla:mckyla /home/mckyla/.ssh
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]

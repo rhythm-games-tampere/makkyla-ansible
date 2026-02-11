@@ -5,3 +5,9 @@
 
 /save-backups
 !/save-backups/.gitkeep
+
+test/id_ed25519
+test/id_ed25519.pub
+
+/.idea
+/.claude/*.local*

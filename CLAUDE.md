@@ -14,6 +14,9 @@ ansible-playbook -i inventories/makkyla full-install.yml --diff --limit <host>
 
 # Target all machines
 ansible-playbook -i inventories/makkyla full-install.yml --diff --limit dedicab
+
+# Run in test container (skips hardware/systemd tasks)
+cd test && bash run-test.sh
 ```
 
 ## Architecture
@@ -57,4 +60,9 @@ Each machine in `inventories/makkyla/hosts` defines: `audio_device`, `main_displ
 - **HDMI cloning**: `start.sh` attempts display cloning via xrandr for streaming (clones `main_display_device` to HDMI-0), with fallback.
 - **Power-off trigger**: A magic UUID string in ITGmania logs triggers `sudo poweroff`.
 - **Systemd service**: `analog-dance-pad` runs as a systemd unit with auto-restart.
-- **CMake build**: ITGmania is built with CMake (`cmake -B Build`, then `cmake --build Build --parallel`).
+- **CMake build**: ITGmania is built with CMake (`cmake -B Build`, then `cmake --build Build --parallel`). Minimaid support is disabled (`-DWITH_MINIMAID=OFF`) because the bundled `libmmmagic` is x86-only; see the TODO comment in `roles/stepmania/tasks/main.yml`.
+- **Task tags**: Hardware-dependent tasks are tagged `hardware` (grub, graphics, udev) and systemd-dependent tasks are tagged `systemd`. Use `--skip-tags hardware,systemd` to run in environments without these (e.g. containers).
+
+## Testing
+
+`test/run-test.sh` builds a Podman container (Ubuntu 24.04 with sshd) and runs the full playbook against it with `--skip-tags hardware,systemd`. An SSH keypair is auto-generated on first run. Use `--cleanup` to remove the container afterwards.

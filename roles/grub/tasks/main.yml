@@ -5,7 +5,9 @@
     line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet nospectre_v1 nospectre_v2 nospec_store_bypass_disable migitations=off usbhid.mousepoll=10 usbhid.kbpoll=10 usbhid.jspoll=1"'
     regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
   register: grub
+  tags: [hardware]
 
 - name: Update GRUB
   shell: update-grub
   when: grub.changed
+  tags: [hardware]

@@ -20,12 +20,14 @@
     name: apt-daily-upgrade.timer
     enabled: no
     state: stopped
+  tags: [systemd]
 
 - name: Disable apt-daily.timer
   systemd:
     name: apt-daily.timer
     enabled: no
     state: stopped
+  tags: [systemd]
 
 - name: Disable automatic system suspend
   copy:
@@ -36,3 +38,4 @@
       AllowSuspendThenHibernate=no
       AllowHybridSleep=no
     dest: /etc/systemd/sleep.conf
+  tags: [systemd]

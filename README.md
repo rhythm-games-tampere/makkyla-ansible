@@ -25,3 +25,13 @@ ansible-playbook -K -i inventories/makkyla full-install.yml --diff --limit <host
 Replace `<host>` with a specific host name (e.g. `pro2`) or use `dedicab` to target all machines.
 
 The first run generates initial ITGmania config files. After a reboot, run the playbook again to apply the full configuration.
+
+## Testing
+
+A Podman-based test environment runs the playbook in a disposable container, skipping hardware and systemd tasks:
+
+```bash
+cd test && bash run-test.sh
+```
+
+This builds an Ubuntu 24.04 container, connects via SSH, and runs `full-install.yml` with `--skip-tags hardware,systemd`. Use `--cleanup` to remove the container afterwards.

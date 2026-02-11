@@ -1,0 +1,5 @@
+[dedicab]
+test1 ansible_host=127.0.0.1 ansible_port=2222 audio_device="hw:CARD=Audio,DEV=0" left_pad_usb_port="8-2" right_pad_usb_port="8-3" main_display_device=HDMI-0
+
+[dedicab:vars]
+ansible_user=mckyla

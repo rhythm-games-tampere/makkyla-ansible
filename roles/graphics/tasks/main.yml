@@ -2,13 +2,16 @@
   apt:
     package: libdrm-amdgpu1,xserver-xorg-video-amdgpu
     update_cache: yes
+  tags: [hardware]
 
 - name: Make sure X.org configuration directory exists
   file:
     path: /etc/X11/xorg.conf.d
     state: directory
+  tags: [hardware]
 
 - name: Install Xorg configuration file
   copy:
     src: files/20-amdgpu.conf
     dest: /etc/X11/xorg.conf.d/20-amdgpu.conf
+  tags: [hardware]
