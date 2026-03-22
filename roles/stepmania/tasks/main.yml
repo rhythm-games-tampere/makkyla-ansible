@@ -2,7 +2,7 @@
 
 - name: Install ITGmania build dependencies
   apt:
-    package: libasound2-dev,libgl-dev,libglu1-mesa-dev,libgtk-3-dev,libjack-dev,libmad0-dev,libpulse-dev,libudev-dev,libxinerama-dev,libx11-dev,libxrandr-dev,libxtst-dev,nasm,cmake,build-essential,git
+    package: libasound2-dev,libgl-dev,libglu1-mesa-dev,libgtk-3-dev,libjack-dev,libmad0-dev,libpulse-dev,libudev-dev,libxinerama-dev,libx11-dev,libxrandr-dev,libxtst-dev,nasm,cmake,build-essential,git,nfs-common
 
 - name: Fetch ITGmania source
   git:
@@ -110,7 +110,7 @@
     - key: Vsync
       value: "0"
     - key: InputDrivers
-      value: "LinuxEvent,X11"
+      value: "LinuxEvent,LinuxJoystick,X11"
     - key: DisplayId
       value: "XSCREEN_RANDR"
     - key: FullscreenIsBorderlessWindow
@@ -126,15 +126,9 @@
 
 ## STARTUP AND DESKTOP ICONS
 
-- name: Copy keymap template
-  copy:
-    src: "files/Keymaps.template.ini"
-    dest: /home/mckyla/Keymaps.template.ini
-    mode: 0755
-
 - name: Copy startup script
   template:
-    src: templates/start.sh
+    src: templates/start-itgmania.sh
     dest: /home/mckyla/start-itgmania.sh
     mode: 0755
 
@@ -147,8 +141,16 @@
 
 - name: Add ITGmania icon to desktop
   copy:
-    src: files/stepmania.desktop
-    dest: /home/mckyla/Desktop/stepmania.desktop
+    src: files/itgmania.desktop
+    dest: /home/mckyla/Desktop/itgmania.desktop
+    mode: 0755
+    owner: mckyla
+    group: mckyla
+
+- name: Copy Keymaps.ini over
+  copy:
+    src: files/Keymaps.ini
+    dest: /home/mckyla/.itgmania/Save/Keymaps.ini
     mode: 0755
     owner: mckyla
     group: mckyla
@@ -174,6 +176,13 @@
     group: mckyla
     state: directory
 
+- name: Make sure LocalProfiles folder exists
+  file:
+    path: /home/mckyla/.itgmania/Save/LocalProfiles
+    owner: mckyla
+    group: mckyla
+    state: directory
+
 - name: Add link to Courses to Desktop
   file:
     src: /home/mckyla/stepmania-content/Courses
@@ -185,5 +194,12 @@
   file:
     src: /home/mckyla/.itgmania/Save
     dest: /home/mckyla/Desktop/Save
+    state: link
+    force: yes
+
+- name: Add link to LocalProfiles to Desktop
+  file:
+    src: /home/mckyla/.itgmania/Save/LocalProfiles
+    dest: /home/mckyla/Desktop/LocalProfiles
     state: link
     force: yes

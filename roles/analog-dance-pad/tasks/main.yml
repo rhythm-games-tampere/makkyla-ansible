@@ -2,8 +2,10 @@
   copy:
     content: |
       SUBSYSTEM=="input", GROUP="input", MODE="0666"
-      SUBSYSTEM=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="204f", MODE:="666", GROUP="plugdev"
-      KERNEL=="hidraw*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="204f", MODE="0666", GROUP="plugdev"
+      SUBSYSTEM=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="b196", MODE:="666", GROUP="plugdev"
+      KERNEL=="hidraw*", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="b196", MODE="0666", GROUP="plugdev"
+      SUBSYSTEM=="usb", ATTRS{idVendor}=="0079", ATTRS{idProduct}=="0006", MODE:="666", GROUP="plugdev"
+      SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000b", MODE:="666", GROUP="plugdev"
     dest: /etc/udev/rules.d/98-permissions-to-analog-dance-pads.rules
   register: udev
   tags: [hardware]
@@ -74,7 +76,6 @@
   shell: npm install --no-save || true
   args:
     chdir: /opt/analog-dance-pad/server
-  when: source.changed
   become_user: mckyla
 
 - name: Fix Python 3 incompatible file mode in node-gyp
@@ -87,15 +88,19 @@
   shell: npm install --no-save
   args:
     chdir: /opt/analog-dance-pad/server
-  when: source.changed
   become_user: mckyla
 
 - name: Build server
   shell: npm run build
   args:
     chdir: /opt/analog-dance-pad/server
-  when: source.changed
   become_user: mckyla
+
+- name: Set correct vendor id
+  shell: sed -i 's/exports\.VENDOR_ID = 0x03eb;/exports\.VENDOR_ID = 0x1209;/g' /opt/analog-dance-pad/server/dist/driver/teensy2/Teensy2DeviceDriver.js
+
+- name: Set correct product id
+  shell: sed -i 's/exports\.PRODUCT_ID = 0x204f;/exports\.PRODUCT_ID = 0xB196;/g' /opt/analog-dance-pad/server/dist/driver/teensy2/Teensy2DeviceDriver.js
 
 - name: Create analog-dance-pad service
   copy:

@@ -6,7 +6,7 @@ After=network.target
 User=mckyla
 WorkingDirectory=/opt/analog-dance-pad/server
 ExecStartPre=/bin/sleep 2
-ExecStart=/usr/bin/node dist/index.js
+ExecStart=/usr/local/bin/node dist/index.js
 Restart=always
 RestartSec=1000ms
 
