@@ -24,8 +24,7 @@ sleep 2
 rm -f "/home/mckyla/.itgmania/Logs/info.txt"
 
 # reset music and visual offsets
-# was -22ms
-sed -i 's/GlobalOffsetSeconds=.*/GlobalOffsetSeconds=-0\.020000/g' /home/mckyla/.itgmania/Save/Preferences.ini
+sed -i 's/GlobalOffsetSeconds=.*/GlobalOffsetSeconds=-0\.029000/g' /home/mckyla/.itgmania/Save/Preferences.ini
 sed -i 's/VisualDelaySeconds=.*/VisualDelaySeconds=0\.000000/g' /home/mckyla/.itgmania/Save/Preferences.ini
 
 # wait 5 seconds for network interface then mount NAS to Songs, LocalProfiles and Courses
