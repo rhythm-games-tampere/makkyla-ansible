@@ -35,11 +35,17 @@ sudo sleep 5
 (sudo umount /home/mckyla/stepmania-content/Songs) || true
 (sudo umount /home/mckyla/.itgmania/Save/LocalProfiles) || true
 (sudo umount /home/mckyla/stepmania-content/Courses) || true
+(sudo umount /home/mckyla/stepmania-content/NoteSkins) || true
+(sudo umount /home/mckyla/stepmania-content/Judgments) || true
+(sudo umount /home/mckyla/stepmania-content/HoldJudgments) || true
 
 # mount additional content from NAS
 sudo mount -t nfs 192.168.11.3:/volume1/Songs /home/mckyla/stepmania-content/Songs
 sudo mount -t nfs 192.168.11.3:/volume1/LocalProfiles /home/mckyla/.itgmania/Save/LocalProfiles/
 sudo mount -t nfs 192.168.11.3:/volume1/Courses /home/mckyla/stepmania-content/Courses
+sudo mount -t nfs 192.168.11.3:/volume1/NoteSkins /home/mckyla/.itgmania/NoteSkins
+sudo mount -t nfs 192.168.11.3:/volume1/Judgments /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_judgments
+sudo mount -t nfs 192.168.11.3:/volume1/HoldJudgments /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_HoldJudgments
 
 # wait 5 seconds to give time for the DAC drivers to load
 sudo sleep 5

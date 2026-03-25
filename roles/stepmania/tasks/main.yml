@@ -183,6 +183,27 @@
     group: mckyla
     state: directory
 
+- name: Make sure NoteSkins folder exists
+  file:
+    path: /home/mckyla/.itgmania/NoteSkins
+    owner: mckyla
+    group: mckyla
+    state: directory
+
+- name: Make sure _judgments folder exists
+  file:
+    path: /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_judgments
+    owner: mckyla
+    group: mckyla
+    state: directory
+
+- name: Make sure _HoldJudgments folder exists
+  file:
+    path: /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_HoldJudgments
+    owner: mckyla
+    group: mckyla
+    state: directory
+
 - name: Add link to Courses to Desktop
   file:
     src: /home/mckyla/stepmania-content/Courses
@@ -201,5 +222,26 @@
   file:
     src: /home/mckyla/.itgmania/Save/LocalProfiles
     dest: /home/mckyla/Desktop/LocalProfiles
+    state: link
+    force: yes
+
+- name: Add link to NoteSkins to Desktop
+  file:
+    src: /home/mckyla/.itgmania/NoteSkins
+    dest: /home/mckyla/Desktop/NoteSkins
+    state: link
+    force: yes
+
+- name: Add link to Judgments to Desktop
+  file:
+    src: /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_judgments
+    dest: /home/mckyla/Desktop/Judgments
+    state: link
+    force: yes
+
+- name: Add link to HoldJudgments to Desktop
+  file:
+    src: /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_HoldJudgments
+    dest: /home/mckyla/Desktop/HoldJudgments
     state: link
     force: yes

@@ -1,7 +1,15 @@
 [Desktop Entry]
+Comment=
+Exec=/home/mckyla/start-itgmania.sh
+GenericName=
+Icon=/opt/itgmania/_assets/logo.svg
+MimeType=
+Name=ITGmania
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=
 Type=Application
 Version=1.0
-Name=ITGmania
-Exec=/home/mckyla/start-itgmania.sh
-Terminal=true
-Icon=/opt/itgmania/icons/hicolor/256x256/apps/itgmania-ssc.png
+X-KDE-SubstituteUID=false
+X-KDE-Username=
