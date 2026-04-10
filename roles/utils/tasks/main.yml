@@ -5,7 +5,7 @@
 
 - name: Install utility packages
   apt:
-    package: vim,htop,rsync,git,curl
+    package: vim,htop,rsync,git,curl,unzip,ripgrep
 
 - name: Enable passwordless sudo for mckyla
   lineinfile:
