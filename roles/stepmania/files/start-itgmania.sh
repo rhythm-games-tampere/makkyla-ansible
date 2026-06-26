@@ -15,10 +15,6 @@ xset s off
 # xrandr --output HDMI-0 --same-as "DVI-D-0" --mode 1280x720 --scale-from 1920x1080
 ) || true
 
-IFS="
-"
-sleep 2
-
 # remove logs before starting ITGmania, just in case we don't accidentally
 # shut down in some corner case.
 rm -f "/home/mckyla/.itgmania/Logs/info.txt"
@@ -26,28 +22,6 @@ rm -f "/home/mckyla/.itgmania/Logs/info.txt"
 # reset music and visual offsets
 sed -i 's/GlobalOffsetSeconds=.*/GlobalOffsetSeconds=-0\.032000/g' /home/mckyla/.itgmania/Save/Preferences.ini
 sed -i 's/VisualDelaySeconds=.*/VisualDelaySeconds=0\.000000/g' /home/mckyla/.itgmania/Save/Preferences.ini
-
-# wait 5 seconds for network interface then mount NAS to Songs, LocalProfiles and Courses
-sudo sleep 5
-
-# unmount first, if there have been changes to the mount paths since the last run
-(sudo umount /home/mckyla/stepmania-content/Songs) || true
-(sudo umount /home/mckyla/.itgmania/Save/LocalProfiles) || true
-(sudo umount /home/mckyla/stepmania-content/Courses) || true
-(sudo umount /home/mckyla/stepmania-content/NoteSkins) || true
-(sudo umount /home/mckyla/stepmania-content/Judgments) || true
-(sudo umount /home/mckyla/stepmania-content/HoldJudgments) || true
-
-# mount additional content from NAS
-sudo mount -t nfs 192.168.11.3:/volume1/Songs /home/mckyla/stepmania-content/Songs
-sudo mount -t nfs 192.168.11.3:/volume1/LocalProfiles /home/mckyla/.itgmania/Save/LocalProfiles/
-sudo mount -t nfs 192.168.11.3:/volume1/Courses /home/mckyla/stepmania-content/Courses
-sudo mount -t nfs 192.168.11.3:/volume1/NoteSkins /home/mckyla/.itgmania/NoteSkins
-sudo mount -t nfs 192.168.11.3:/volume1/Judgments /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_judgments
-sudo mount -t nfs 192.168.11.3:/volume1/HoldJudgments /home/mckyla/stepmania-content/Themes/simplylove/Graphics/_HoldJudgments
-
-# wait 5 seconds to give time for the DAC drivers to load
-sudo sleep 5
 
 /opt/itgmania/itgmania
 
