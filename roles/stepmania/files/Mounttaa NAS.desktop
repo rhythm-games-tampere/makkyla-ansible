@@ -1,0 +1,15 @@
+[Desktop Entry]
+Comment=
+Exec=/home/mckyla/mountnas.sh
+GenericName=
+Icon=a-boy-and-his-blob
+MimeType=
+Name=Mounttaa NAS
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=\s--noclose
+Type=Application
+Version=1.0
+X-KDE-SubstituteUID=false
+X-KDE-Username=
