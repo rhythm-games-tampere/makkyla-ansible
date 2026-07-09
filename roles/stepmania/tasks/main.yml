@@ -66,7 +66,7 @@
   git:
     repo: https://github.com/rhythm-games-tampere/simplylove
     dest: /home/mckyla/stepmania-content/Themes/simplylove
-    version: stable-mckyla
+    version: stable
   become_user: mckyla
   diff: false
 
@@ -110,7 +110,7 @@
     - key: DisplayAspectRatio
       value: "1.777778"
     - key: ArcadeOptionsNavigation
-      value: "1"
+      value: "0"
     - key: OnlyDedicatedMenuButtons
       value: "1"
     - key: BGBrightness
@@ -148,18 +148,27 @@
     regexp: "^Theme=(.*)"
   when: preferences.stat.exists
 
-- name: Download Arrow Cloud Module
-  get_url:
-    url: "https://assets.arrowcloud.dance/theme/Arrow%20Cloud%20Module%2020260320.2.zip"
-    dest: /tmp/arrow-cloud-module.zip
+- name: Check if ThemePrefs.ini exists
+  stat:
+    path: /home/mckyla/.itgmania/Save/ThemePrefs.ini
+  register: theme_prefs
 
-- name: Install Arrow Cloud Module
-  unarchive:
-    src: /tmp/arrow-cloud-module.zip
-    dest: /home/mckyla/stepmania-content/Themes/simplylove/Modules
-    remote_src: yes
-    owner: mckyla
-    group: mckyla
+- name: Set theme preferences
+  lineinfile:
+    path: /home/mckyla/.itgmania/Save/ThemePrefs.ini
+    line: "{{ item.key }}={{ item.value }}\r"
+    insertafter: '\[simplylove\]'
+    regexp: "^{{ item.key }}"
+  with_items:
+    - key: TitleLogo
+      value: McKyla
+    - key: TitleMenuPowerOff
+      value: true
+    - key: AutoSetDefaultProfile
+      value: true
+    - key: PgUpPgDnVolumeKeys
+      value: false
+  when: theme_prefs.stat.exists
 
 ## STARTUP AND DESKTOP ICONS
 
@@ -323,3 +332,8 @@
     dest: /home/mckyla/Desktop/HoldJudgments
     state: link
     force: yes
+
+- name: (Re)mount NAS shares
+  command: /home/mckyla/mountnas.sh
+  changed_when: false
+  failed_when: false
