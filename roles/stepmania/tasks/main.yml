@@ -77,98 +77,21 @@
     owner: mckyla
     group: mckyla
 
-- name: Check if Preferences.ini exists
-  stat:
-    path: /home/mckyla/.itgmania/Save/Preferences.ini
-  register: preferences
+- name: Copy Preferences.ini
+  copy:
+    src: files/Preferences-standard.ini
+    dest: /home/mckyla/Preferences-standard.ini
+    mode: 0644
+    owner: mckyla
+    group: mckyla
 
-- name: Set basic preferences
-  lineinfile:
-    path: /home/mckyla/.itgmania/Save/Preferences.ini
-    line: "{{ item.key }}={{ item.value }}\r"
-    insertafter: '\[Options\]'
-    regexp: "^{{ item.key }}"
-  with_items:
-    - key: AdditionalFolders
-      value: /home/mckyla/stepmania-content
-    - key: Windowed
-      value: "0"
-    - key: SoundDrivers
-      value: alsa-sw
-    - key: SoundDevice
-      value: "{{ audio_device }}"
-    - key: SoundPreferredSampleRate
-      value: "48000"
-    - key: LightsDriver
-      value: ""
-    - key: Theme
-      value: "simplylove"
-    - key: DisplayWidth
-      value: "1920"
-    - key: DisplayHeight
-      value: "1080"
-    - key: DisplayAspectRatio
-      value: "1.777778"
-    - key: ArcadeOptionsNavigation
-      value: "0"
-    - key: OnlyDedicatedMenuButtons
-      value: "1"
-    - key: BGBrightness
-      value: "0.200000"
-    - key: ShowNativeLanguage
-      value: "0"
-    - key: MusicWheelSwitchSpeed
-      value: "100"
-    - key: DelayedBack
-      value: "0"
-    - key: PercentageScoring
-      value: "1"
-    - key: AutogenGroupCourses
-      value: "0"
-    - key: CourseSortOrder
-      value: "Title" # note: only works in our custom build
-    - key: DefaultModifiers
-      value: "FailImmediateContinue, Overhead, Cel, C600"
-    - key: Vsync
-      value: "0"
-    - key: InputDrivers
-      value: "LinuxEvent,LinuxJoystick,X11"
-    - key: DisplayId
-      value: "XSCREEN_RANDR"
-    - key: FullscreenIsBorderlessWindow
-      value: 0
-    - key: HttpAllowHosts
-      value: "*.groovestats.com,*.arrowcloud.dance"
-  when: preferences.stat.exists
-
-- name: Replace all instances of theme
-  replace:
-    path: /home/mckyla/.itgmania/Save/Preferences.ini
-    replace: "Theme=simplylove"
-    regexp: "^Theme=(.*)"
-  when: preferences.stat.exists
-
-- name: Check if ThemePrefs.ini exists
-  stat:
-    path: /home/mckyla/.itgmania/Save/ThemePrefs.ini
-  register: theme_prefs
-
-- name: Set theme preferences
-  lineinfile:
-    path: /home/mckyla/.itgmania/Save/ThemePrefs.ini
-    line: "{{ item.key }}={{ item.value }}\r"
-    insertafter: '\[simplylove\]'
-    regexp: "^{{ item.key }}"
-  with_items:
-    - key: TitleLogo
-      value: McKyla
-    - key: TitleMenuPowerOff
-      value: true
-    - key: AutoSetDefaultProfile
-      value: true
-    - key: PgUpPgDnVolumeKeys
-      value: false
-  when: theme_prefs.stat.exists
+- name: Copy ThemePrefs.ini
+  copy:
+    src: files/ThemePrefs-standard.ini
+    dest: /home/mckyla/ThemePrefs-standard.ini
+    mode: 0644
+    owner: mckyla
+    group: mckyla
 
 ## STARTUP AND DESKTOP ICONS
 

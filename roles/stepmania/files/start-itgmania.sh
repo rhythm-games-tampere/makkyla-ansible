@@ -19,9 +19,9 @@ xset s off
 # shut down in some corner case.
 rm -f "/home/mckyla/.itgmania/Logs/info.txt"
 
-# reset music and visual offsets
-sed -i 's/GlobalOffsetSeconds=.*/GlobalOffsetSeconds=-0\.032000/g' /home/mckyla/.itgmania/Save/Preferences.ini
-sed -i 's/VisualDelaySeconds=.*/VisualDelaySeconds=0\.000000/g' /home/mckyla/.itgmania/Save/Preferences.ini
+# reset settings
+cp /home/mckyla/Preferences-standard.ini /home/mckyla/.itgmania/Save/Preferences.ini
+cp /home/mckyla/ThemePrefs-standard.ini /home/mckyla/.itgmania/Save/ThemePrefs.ini
 
 /opt/itgmania/itgmania
 
