@@ -85,9 +85,9 @@
     owner: mckyla
     group: mckyla
 
-- name: Copy ThemePrefs.ini
-  copy:
-    src: files/ThemePrefs-standard.ini
+- name: Write ThemePrefs.ini
+  template:
+    src: ThemePrefs-standard.ini
     dest: /home/mckyla/ThemePrefs-standard.ini
     mode: 0644
     owner: mckyla
