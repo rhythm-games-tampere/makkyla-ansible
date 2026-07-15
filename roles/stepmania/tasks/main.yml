@@ -29,9 +29,9 @@
 
 - name: Fetch ITGmania source
   git:
-    repo: https://github.com/rhythm-games-tampere/itgmania
+    repo: "{{ itgmania_repo }}"
     dest: /opt/itgmania
-    version: stable
+    version: "{{ itgmania_version }}"
     recursive: yes
   register: source
   diff: false
@@ -64,9 +64,9 @@
 
 - name: Get Simply Love
   git:
-    repo: https://github.com/rhythm-games-tampere/simplylove
+    repo: "{{ simplylove_repo }}"
     dest: /home/mckyla/stepmania-content/Themes/simplylove
-    version: stable
+    version: "{{ simplylove_version }}"
   become_user: mckyla
   diff: false
 
