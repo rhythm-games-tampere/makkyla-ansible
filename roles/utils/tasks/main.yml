@@ -7,6 +7,20 @@
   apt:
     package: vim,htop,rsync,git,curl,unzip,ripgrep
 
+# For some reason GH intermittently prompts HTTP authentication on HTTP/2.
+# workaround...
+- name: Check git http.version for mckyla
+  command: git config --global --get http.version
+  become_user: mckyla
+  register: git_http_version
+  failed_when: git_http_version.rc not in [0, 1]
+  changed_when: false
+
+- name: Force git to use HTTP/1.1 for mckyla
+  command: git config --global http.version HTTP/1.1
+  become_user: mckyla
+  when: git_http_version.stdout != "HTTP/1.1"
+
 - name: Enable passwordless sudo for mckyla
   lineinfile:
     path: /etc/sudoers

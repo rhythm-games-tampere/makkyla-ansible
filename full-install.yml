@@ -1,5 +1,8 @@
 - hosts: all
   become: true
+  environment:
+    # Fail immediately instead of hanging if git ever asks for credentials
+    GIT_TERMINAL_PROMPT: "0"
   roles:
     - grub
     - ssh
