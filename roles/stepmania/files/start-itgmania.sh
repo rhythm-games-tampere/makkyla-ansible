@@ -8,7 +8,7 @@ xset s off
 
 # try to clone displays for streaming – but if it's not possible for some reason, that's fine as well
 (
-  xrandr --output 'HDMI-A-0' --mode 1920x1080 --scale 1x1 --rate 120 --panning 0x0
+  xrandr --output 'DisplayPort-0' --mode 1920x1080 --scale 1x1 --rate 120 --panning 0x0 --output 'HDMI-A-0' --same-as 'DisplayPort-0' --mode 1280x720 --scale-from 1920x1080
 # xrandr --output 'HDMI-A-0' --mode 1920x1080 --scale 1x1 --rate 120 --panning 0x0 --output 'DisplayPort-0' --same-as 'HDMI-0' --mode 1280x720 --scale-from 1920x1080
 # xrandr --output 'HDMI-0' --mode 1920x1080 --scale 1x1 --rate 120 --panning 0x0
 # xrandr --output HDMI-0 --off --output "DVI-D-0" --panning 0x0 &&
