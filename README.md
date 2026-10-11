@@ -13,17 +13,22 @@ and is ran on existing setups regularly to apply updated configuration and updat
 
 ## Provisioning
 
-Unless overriding something, just run:
+Unless overriding something, do a basic deploy. This will install the `stable` branch of itgmania and simplylove to every cab.
 
 ```bash
 ./deploy.py --all
 ```
+
+Note, that the active branch in McKylä is usually not `stable`, but `experimental`, so this will also revert it.
+If wanting to keep the experimental branch, add `--simplylove-branch experimental`.
 
 To limit to a single host:
 
 ```bash
 ./deploy.py --limit pro
 ```
+
+See `--help` for all available options.
 
 
 ## Testing
