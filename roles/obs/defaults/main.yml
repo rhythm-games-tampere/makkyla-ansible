@@ -1,0 +1,12 @@
+# Only values used in more than one place live here; everything else is
+# inlined in tasks/main.yml and the templates.
+
+# NDI plugin: https://github.com/DistroAV/DistroAV/releases
+# Ubuntu's own obs-studio (30.x) is too old for DistroAV 6, hence the PPA in tasks.
+distroav_version: 6.2.1
+distroav_deb_url: "https://github.com/DistroAV/DistroAV/releases/download/{{ distroav_version }}/distroav-{{ distroav_version }}-x86_64-linux-gnu.deb"
+distroav_deb_sha256: d1619d38d1cd6bc5a72f1cec3da8a9a55ce69e957a47443a2b444bfcefdc5021
+
+# NDI output resolution; also the display-capture transform in the scene collection.
+obs_output_width: 1920
+obs_output_height: 1080

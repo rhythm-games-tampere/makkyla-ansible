@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=OBS NDI mirror
+Comment=Mirror the game display to the network over NDI
+Exec=/home/mckyla/start-obs.sh
+Icon=com.obsproject.Studio
+Terminal=false
+X-GNOME-Autostart-enabled=true

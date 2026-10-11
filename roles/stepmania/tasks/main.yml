@@ -41,17 +41,24 @@
 # which breaks arm64 builds. We don't use Minimaid hardware anyway (LightsDriver="").
 # Upstream ITGmania replaced libmmmagic with hidapi in PR #946 (merged to beta Aug 2025).
 # TODO: Once our fork merges upstream beta (which includes PR #946), this flag can be removed.
+# JACK is off by default
+- name: Check whether the existing build has JACK enabled
+  command: grep -q '^WITH_JACK:BOOL=ON' /opt/itgmania/Build/CMakeCache.txt
+  register: jack_in_cache
+  failed_when: false
+  changed_when: false
+
 - name: Run CMake
-  shell: cmake -B Build -DWITH_FFMPEG_JOBS=$(nproc) -DWITH_MINIMAID=OFF
+  shell: cmake -B Build -DWITH_FFMPEG_JOBS=$(nproc) -DWITH_MINIMAID=OFF -DWITH_JACK=ON
   args:
     chdir: /opt/itgmania
-  when: source.changed
+  when: source.changed or jack_in_cache.rc != 0
 
 - name: Compile ITGmania
   shell: cmake --build Build --parallel $(nproc)
   args:
     chdir: /opt/itgmania
-  when: source.changed
+  when: source.changed or jack_in_cache.rc != 0
 
 ## THEME AND CONFIGURATION
 

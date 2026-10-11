@@ -1,0 +1,74 @@
+{
+    "name": "makkyla",
+    "current_scene": "Arcade",
+    "current_program_scene": "Arcade",
+    "scene_order": [
+        {
+            "name": "Arcade"
+        }
+    ],
+    "DesktopAudioDevice1": {
+        "id": "pulse_output_capture",
+        "versioned_id": "pulse_output_capture",
+        "name": "Desktop Audio",
+        "settings": {
+            "device_id": "default"
+        },
+        "volume": 1.0,
+        "muted": false,
+        "enabled": true
+    },
+    "sources": [
+        {
+            "id": "scene",
+            "versioned_id": "scene",
+            "name": "Arcade",
+            "enabled": true,
+            "settings": {
+                "id_counter": 1,
+                "custom_size": false,
+                "items": [
+                    {
+                        "name": "Primary display",
+                        "id": 1,
+                        "visible": true,
+                        "locked": true,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "rot": 0.0,
+                        "align": 5,
+                        "bounds_type": 2,
+                        "bounds_align": 0,
+                        "bounds": {
+                            "x": {{ obs_output_width }}.0,
+                            "y": {{ obs_output_height }}.0
+                        },
+                        "crop_top": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "xshm_input",
+            "name": "Primary display",
+            "enabled": true,
+            "settings": {
+                "screen": 0,
+                "show_cursor": false,
+                "advanced": false
+            }
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+- name: Install PipeWire JACK interface and tools
+  apt:
+    package: pipewire-jack,pipewire-pulse,wireplumber,jq
+
+- name: Make sure PipeWire drop-in directory exists
+  file:
+    path: /etc/pipewire/pipewire.conf.d
+    state: directory
+
+- name: Pin PipeWire sample rate and cycle length
+  copy:
+    src: files/50-makkyla-fixed-latency.conf
+    dest: /etc/pipewire/pipewire.conf.d/50-makkyla-fixed-latency.conf
+    mode: 0644
+  notify: restart pipewire
+
+# Read by JACK clients at connect time; no PipeWire restart needed.
+- name: Make sure PipeWire JACK drop-in directory exists
+  file:
+    path: /etc/pipewire/jack.conf.d
+    state: directory
+
+- name: Name the default sink "system" for JACK clients
+  copy:
+    src: files/50-makkyla-jack.conf
+    dest: /etc/pipewire/jack.conf.d/50-makkyla-jack.conf
+    mode: 0644

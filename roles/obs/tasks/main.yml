@@ -1,0 +1,102 @@
+## PACKAGES
+# OBS, libndi and DistroAV are x86_64-only; the arm64 test container only gets config files.
+
+- name: Install OBS prerequisites
+  apt:
+    package: software-properties-common,avahi-daemon,libavahi-client3,curl
+  when: ansible_facts["architecture"] == "x86_64"
+
+# NDI discovery is mDNS via Avahi.
+- name: Enable Avahi for NDI discovery
+  systemd:
+    name: avahi-daemon
+    enabled: yes
+    state: started
+  tags: [systemd]
+
+- name: Add obsproject PPA
+  apt_repository:
+    repo: ppa:obsproject/obs-studio
+    update_cache: yes
+  when: ansible_facts["architecture"] == "x86_64"
+
+# state=latest: Ubuntu Studio preinstalls obs-studio 30, which DistroAV 6 crashes on.
+- name: Install OBS Studio from the PPA
+  apt:
+    package: obs-studio
+    state: latest
+  when: ansible_facts["architecture"] == "x86_64"
+
+- name: Copy libndi installer
+  copy:
+    src: files/install-libndi.sh
+    dest: /usr/local/sbin/install-libndi.sh
+    mode: 0755
+
+- name: Install NDI runtime (libndi)
+  command: /usr/local/sbin/install-libndi.sh https://downloads.ndi.tv/SDK/NDI_SDK_Linux/Install_NDI_SDK_v6_Linux.tar.gz /opt/ndi-sdk
+  args:
+    creates: /usr/local/lib/libndi.so.6
+  when: ansible_facts["architecture"] == "x86_64"
+
+- name: Create directory for DistroAV package
+  file:
+    path: /opt/distroav
+    state: directory
+
+- name: Download DistroAV
+  get_url:
+    url: "{{ distroav_deb_url }}"
+    dest: "/opt/distroav/distroav-{{ distroav_version }}-x86_64-linux-gnu.deb"
+    checksum: "sha256:{{ distroav_deb_sha256 }}"
+  when: ansible_facts["architecture"] == "x86_64"
+
+- name: Install DistroAV
+  apt:
+    deb: "/opt/distroav/distroav-{{ distroav_version }}-x86_64-linux-gnu.deb"
+  when: ansible_facts["architecture"] == "x86_64"
+
+## CONFIGURATION
+# Canonical config lives in /home/mckyla/obs-config; start-obs.sh copies it over
+# ~/.config/obs-studio on every launch because OBS rewrites its ini files on exit.
+
+- name: Create OBS config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: mckyla
+    group: mckyla
+  loop:
+    - /home/mckyla/obs-config
+    - /home/mckyla/obs-config/basic/profiles/makkyla
+    - /home/mckyla/obs-config/basic/scenes
+    - /home/mckyla/.config/autostart
+
+- name: Write OBS configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "/home/mckyla/obs-config/{{ item.dest }}"
+    mode: 0644
+    owner: mckyla
+    group: mckyla
+  loop:
+    - { src: global.ini,   dest: global.ini }
+    - { src: user.ini,     dest: user.ini }
+    - { src: basic.ini,    dest: basic/profiles/makkyla/basic.ini }
+    - { src: makkyla.json, dest: basic/scenes/makkyla.json }
+
+- name: Copy OBS startup script
+  copy:
+    src: files/start-obs.sh
+    dest: /home/mckyla/start-obs.sh
+    mode: 0755
+    owner: mckyla
+    group: mckyla
+
+- name: Start OBS at desktop login
+  copy:
+    src: files/makkyla-obs.desktop
+    dest: /home/mckyla/.config/autostart/makkyla-obs.desktop
+    mode: 0644
+    owner: mckyla
+    group: mckyla

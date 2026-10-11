@@ -8,5 +8,7 @@
     - ssh
     - utils
     - graphics
+    - pipewire
     - stepmania
     - analog-dance-pad
+    - obs

@@ -1,0 +1,12 @@
+# User-session services: only restartable while mckyla is logged in.
+# Restarting disconnects running audio clients (game, OBS).
+- name: restart pipewire
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+    if [ -S "$XDG_RUNTIME_DIR/pipewire-0" ]; then
+      systemctl --user restart pipewire.service wireplumber.service pipewire-pulse.service
+    else
+      echo "No running PipeWire session for mckyla, config applies at next login"
+    fi
+  become_user: mckyla
+  tags: [systemd]
