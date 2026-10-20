@@ -53,3 +53,11 @@
       AllowHybridSleep=no
     dest: /etc/systemd/sleep.conf
   tags: [systemd]
+
+- name: Disable Plasma session restore
+  copy:
+    content: |
+      [General]
+      loginMode=emptySession
+    dest: /etc/xdg/ksmserverrc
+    mode: 0644
