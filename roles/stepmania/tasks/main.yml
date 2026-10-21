@@ -42,23 +42,23 @@
 # Upstream ITGmania replaced libmmmagic with hidapi in PR #946 (merged to beta Aug 2025).
 # TODO: Once our fork merges upstream beta (which includes PR #946), this flag can be removed.
 # JACK is off by default
-- name: Check whether the existing build has JACK enabled
-  command: grep -q '^WITH_JACK:BOOL=ON' /opt/itgmania/Build/CMakeCache.txt
-  register: jack_in_cache
+- name: Check whether the existing build has JACK enabled and is a Release build
+  shell: grep -q '^WITH_JACK:BOOL=ON' /opt/itgmania/Build/CMakeCache.txt && grep -q '^CMAKE_BUILD_TYPE:STRING=Release' /opt/itgmania/Build/CMakeCache.txt
+  register: cache_ok
   failed_when: false
   changed_when: false
 
 - name: Run CMake
-  shell: cmake -B Build -DWITH_FFMPEG_JOBS=$(nproc) -DWITH_MINIMAID=OFF -DWITH_JACK=ON
+  shell: cmake -B Build -DCMAKE_BUILD_TYPE=Release -DWITH_FFMPEG_JOBS=$(nproc) -DWITH_MINIMAID=OFF -DWITH_JACK=ON
   args:
     chdir: /opt/itgmania
-  when: source.changed or jack_in_cache.rc != 0
+  when: source.changed or cache_ok.rc != 0
 
 - name: Compile ITGmania
   shell: cmake --build Build --parallel $(nproc)
   args:
     chdir: /opt/itgmania
-  when: source.changed or jack_in_cache.rc != 0
+  when: source.changed or cache_ok.rc != 0
 
 ## THEME AND CONFIGURATION
 
